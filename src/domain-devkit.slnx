@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/app/">
+    <Project Path="app/DomainDevKit.Application.csproj" />
+  </Folder>
+  <Folder Name="/domain/">
+    <Project Path="domain/DomainDevKit.Domain.csproj" />
+  </Folder>
+  <Folder Name="/infra/">
+    <Project Path="infra/DomainDevKit.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DomainDevkit.Tests.csproj" />
+  </Folder>
+</Solution>

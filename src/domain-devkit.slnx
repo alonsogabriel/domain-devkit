@@ -1,12 +1,9 @@
 <Solution>
-  <Folder Name="/app/">
-    <Project Path="app/DomainDevKit.Application.csproj" />
+  <Folder Name="/efcore/">
+    <Project Path="efcore/DomainDevKit.EFCore.csproj" />
   </Folder>
-  <Folder Name="/domain/">
-    <Project Path="domain/DomainDevKit.Domain.csproj" />
-  </Folder>
-  <Folder Name="/infra/">
-    <Project Path="infra/DomainDevKit.Infrastructure.csproj" />
+  <Folder Name="/main/">
+    <Project Path="main/DomainDevKit.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/DomainDevkit.Tests.csproj" />

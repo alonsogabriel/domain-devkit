@@ -3,6 +3,7 @@ using DomainDevKit.Identity;
 using DomainDevKit.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Abstractions;
+using DomainDevkit.Tests.Unit.Domain;
 
 namespace DomainDevkit.Tests.Integration;
 
@@ -38,10 +39,47 @@ public class PersonBaseTests(ITestOutputHelper output)
         output.WriteLine(savedOrder.CustomerId.ToString());
         output.WriteLine(savedOrder.Status.ToString());
     }
+
+    [Fact(DisplayName = "Add product successfully")]
+    public async Task AddProductSuccessfully()
+    {
+        // Given
+        using var db = new FakeDb();
+        var product = new Product();
+    
+        // When
+        product.Descriptions.Add(new()
+        {
+            Locale = new("pt-BR"),
+            Value = "Máquina de lavar roupas"
+        });
+
+        product.Descriptions.Add(new()
+        {
+            Locale = new("en-US"),
+            Value = "Washing machine"
+        });
+    
+        // Then
+        db.Products.Add(product);
+        db.SaveChanges();
+        var savedProduct = db.Products
+            .AsNoTracking()
+            .Include(p => p.Descriptions)
+            .FirstOrDefault(p => p.Id == product.Id);
+
+        Assert.NotNull(savedProduct);
+
+        foreach(var desc in savedProduct.Descriptions)
+        {
+            output.WriteLine($"{desc.Locale.Value}: {desc.Value}");
+        }
+    }
 }
 
 internal class FakeDb : DbContext
 {
+    public DbSet<Product> Products { get; init; }
     public DbSet<Customer> Customers { get; init; }
     public DbSet<Order> Orders { get; init; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -67,6 +105,20 @@ internal class FakeDb : DbContext
                     .IsRequired();
 
                 o.HasEnum<Order, OrderStatus>(x => x.StatusId);
+            })
+            .Entity<Product>(p =>
+            {
+                p.HasMany(x => x.Descriptions)
+                    .WithOne()
+                    .HasForeignKey(d => d.ProductId)
+                    .IsRequired();
+            })
+            .Entity<ProductDescription>(e =>
+            {
+                e.MapLocaleData();
+                e.Property(x => x.Value)
+                    .HasMaxLength(50)
+                    .IsRequired();
             });
     }
 }
@@ -101,6 +153,12 @@ internal class Order : EntitySoftDelete<OrderId, Guid>
     public CustomerId CustomerId { get; set; }
     public int StatusId { get; private set; }
     public OrderStatus Status => OrderStatus.ById(StatusId);
+}
+
+public class Product
+{
+    public int Id { get; set; }
+    public List<ProductDescription> Descriptions { get; init; } = [];
 }
 
 internal record OrderStatus : EnumEntity<OrderStatus>

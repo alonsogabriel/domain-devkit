@@ -139,4 +139,21 @@ public static class MappingExtensions
             .HasForeignKey(fk)
             .IsRequired(required);
     }
+
+    public static EntityTypeBuilder<T> MapLocaleData<T>(this EntityTypeBuilder<T> builder, bool unique = true)
+        where T : class, ILocaleData
+    {
+        return builder.OwnsOne(e => e.Locale, x =>
+        {
+            x.Property(l => l.Value)
+                .HasMaxLength(5)
+                .IsRequired();
+
+            if (unique)
+            {
+                x.HasIndex(l => l.Value)
+                    .IsUnique();
+            }
+        });
+    }
 }

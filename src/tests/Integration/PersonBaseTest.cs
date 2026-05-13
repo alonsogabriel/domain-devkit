@@ -123,7 +123,7 @@ internal class FakeDb : DbContext
     }
 }
 
-internal sealed record CustomerId(Guid Value) : ObjectId<Guid>(Value)
+internal sealed class CustomerId(Guid Value) : ObjectId<Guid>(Value)
 {
     public CustomerId() : this(Guid.NewGuid()) { }
 }
@@ -135,7 +135,7 @@ internal class Customer : PersonBase<CustomerId, Guid>
         : base(new CustomerId(), name, gender, birthDate) { }
 }
 
-internal sealed record OrderId(Guid Value) : ObjectId<Guid>(Value)
+internal sealed class OrderId(Guid Value) : ObjectId<Guid>(Value)
 {
     public OrderId() : this(Guid.NewGuid()) { }
 }

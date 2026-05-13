@@ -22,7 +22,7 @@ public class PersonBaseTests(ITestOutputHelper output)
     }
 }
 
-internal sealed record PersonId(Guid Id) : ObjectId<Guid>(Id)
+internal sealed class PersonId(Guid Id) : ObjectId<Guid>(Id)
 {
     public static PersonId New() => new(Guid.NewGuid());
 }

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace DomainDevKit;
 
@@ -37,7 +38,7 @@ public static class GenericExtensions
         return value.CompareTo(other) < 0;
     }
 
-    public static bool IsLessThanOrEqual<T>(this T value, T other) where T: IComparable<T>
+    public static bool IsLessThanOrEqual<T>(this T value, T other) where T : IComparable<T>
     {
         return value.CompareTo(other) <= 0;
     }
@@ -51,6 +52,15 @@ public static class GenericExtensions
             (min, max) = (max, min);
         }
 
-        return value.IsGreaterThanOrEqual(min) && value.IsLessThanOrEqual(max); 
+        return value.IsGreaterThanOrEqual(min) && value.IsLessThanOrEqual(max);
+    }
+
+    public static T NotNull<T>(this T? obj,
+        [CallerArgumentExpression(nameof(obj))] string? paramName = null)
+        where T : class
+    {
+        ArgumentNullException.ThrowIfNull(obj, paramName);
+
+        return obj;
     }
 }

@@ -1,7 +1,7 @@
 namespace DomainDevKit;
 
 public interface IEntityTimestamps<TId, TValue> : IEntity<TId, TValue>
-    where TId : ObjectId<TValue>
+    where TId : struct, IObjectId<TValue>
     where TValue : notnull
 {
     DateTime CreatedAt { get; }
@@ -10,7 +10,7 @@ public interface IEntityTimestamps<TId, TValue> : IEntity<TId, TValue>
 
 public abstract class EntityTimestamps<TId, TValue>
     : Entity<TId, TValue>, IEntityTimestamps<TId, TValue>
-    where TId : ObjectId<TValue>
+    where TId : struct, IObjectId<TValue>
     where TValue : notnull
 {
     protected EntityTimestamps() { }

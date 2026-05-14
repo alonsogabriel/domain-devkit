@@ -17,7 +17,7 @@ public interface IPersonBase
 
 public abstract class PersonBase<TId, TValue>
     : EntitySoftDelete<TId, TValue>, IPersonBase
-    where TId : ObjectId<TValue>
+    where TId : struct, IObjectId<TValue>
     where TValue : notnull
 {
     protected PersonBase() { }

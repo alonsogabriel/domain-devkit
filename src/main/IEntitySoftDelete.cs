@@ -2,7 +2,7 @@ namespace DomainDevKit;
 
 public abstract class EntitySoftDelete<TId, TValue>
     : EntityTimestamps<TId, TValue>, ISoftDelete
-    where TId : ObjectId<TValue>
+    where TId : struct, IObjectId<TValue>
     where TValue : notnull
 {
 

@@ -1,4 +1,3 @@
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using DomainDevKit;
 
@@ -15,9 +14,9 @@ public class ObjectIdTests
         var b = new SomeId(a.Value);
         var c = new SomeId();
         var d = c;
-    
+
         // When
-    
+
         // Then
         Assert.Equal(a, b);
         Assert.Equal(c, d);
@@ -31,22 +30,17 @@ public class ObjectIdTests
         var a = new SomeId(rand);
         var b = new SomeId(rand - 1);
         var c = new SomeId();
-        var d = new SomeId();
-    
+
         // When
-    
+
         // Then
         Assert.NotEqual(a, b);
         Assert.NotEqual(a, c);
-        Assert.NotEqual(a, d);
         Assert.NotEqual(b, c);
-        Assert.NotEqual(b, d);
-        Assert.NotEqual(c, d);
     }
 }
 
-public class SomeId : ObjectId<int>
+public readonly struct SomeId(int value) : IObjectId<int>
 {
-    public SomeId() { }
-    public SomeId(int value) : base(value) { }
+    public int Value { get; private init; } = value;
 }

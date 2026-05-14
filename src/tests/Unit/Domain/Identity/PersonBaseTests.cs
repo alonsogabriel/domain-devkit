@@ -22,9 +22,10 @@ public class PersonBaseTests(ITestOutputHelper output)
     }
 }
 
-internal sealed class PersonId(Guid Id) : ObjectId<Guid>(Id)
+internal readonly struct PersonId(Guid value) : IObjectId<Guid>
 {
     public static PersonId New() => new(Guid.NewGuid());
+    public Guid Value  { get; private init; } = value;
 }
 
 internal class Person : PersonBase<PersonId, Guid>

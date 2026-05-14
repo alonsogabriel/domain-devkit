@@ -30,10 +30,10 @@ public class PersonBaseTests(ITestOutputHelper output)
         db.SaveChanges();
 
         // Then
-        var savedOrder = db.Orders.FirstOrDefault(o => o.Id == order.Id);
+        var savedOrder = db.Orders.FirstOrDefault(o => o.Id.Equals(order.Id));
 
         Assert.NotNull(savedOrder);
-        Assert.NotNull(db.Customers.AsNoTracking().FirstOrDefault(c => c.Id == savedOrder.CustomerId));
+        Assert.NotNull(db.Customers.AsNoTracking().FirstOrDefault(c => c.Id.Equals(savedOrder.CustomerId)));
 
         output.WriteLine(savedOrder.Id.ToString());
         output.WriteLine(savedOrder.CustomerId.ToString());
@@ -123,9 +123,11 @@ internal class FakeDb : DbContext
     }
 }
 
-internal sealed class CustomerId(Guid Value) : ObjectId<Guid>(Value)
+internal readonly struct CustomerId(Guid value) : IObjectId<Guid>
 {
     public CustomerId() : this(Guid.NewGuid()) { }
+
+    public Guid Value { get; private init; } = value;
 }
 
 internal class Customer : PersonBase<CustomerId, Guid>
@@ -135,9 +137,11 @@ internal class Customer : PersonBase<CustomerId, Guid>
         : base(new CustomerId(), name, gender, birthDate) { }
 }
 
-internal sealed class OrderId(Guid Value) : ObjectId<Guid>(Value)
+internal readonly struct OrderId(Guid value) : IObjectId<Guid>
 {
     public OrderId() : this(Guid.NewGuid()) { }
+
+    public Guid Value  { get; private init; } = value;
 }
 
 internal class Order : EntitySoftDelete<OrderId, Guid>

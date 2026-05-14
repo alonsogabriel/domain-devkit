@@ -1,14 +1,14 @@
 ﻿namespace DomainDevKit;
 
 public interface IEntity<TId, TValue>
-    where TId : ObjectId<TValue>
+    where TId : struct, IObjectId<TValue>
     where TValue : notnull
 {
     TId Id { get; }
 }
 
 public abstract class Entity<TId, TValue> : IEntity<TId, TValue>
-    where TId : ObjectId<TValue>
+    where TId : struct, IObjectId<TValue>
     where TValue : notnull
 {
     protected Entity() { }
@@ -25,14 +25,28 @@ public abstract class Entity<TId, TValue> : IEntity<TId, TValue>
         if (obj is not Entity<TId, TValue> other)
             return false;
 
-        if (other.GetType() != this.GetType())
+        if (obj.GetType() != this.GetType())
             return false;
 
-        return this.Id.Equals(other.Id);
+        if (other.IsTransient || this.IsTransient)
+            return ReferenceEquals(this, other);
+
+        return EqualityComparer<TId>.Default.Equals(other.Id, this.Id);
     }
 
     public override int GetHashCode()
     {
-        return this.Id.GetHashCode();
+        if (this.IsTransient)
+            return base.GetHashCode();
+
+        return HashCode.Combine(this, Id);
+    }
+
+    public bool IsTransient
+    {
+        get
+        {
+            return EqualityComparer<TId>.Default.Equals(Id, default);
+        }
     }
 }

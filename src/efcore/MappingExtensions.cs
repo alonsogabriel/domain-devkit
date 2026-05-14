@@ -11,7 +11,7 @@ public static class MappingExtensions
     public static void MapEntity<E, I, V>(this EntityTypeBuilder<E> builder,
         Expression<Func<V, I>> idConversion, Action<PropertyBuilder<I>>? idBuilder = null)
         where E : Entity<I, V>
-        where I : ObjectId<V>
+        where I : struct, IObjectId<V>
         where V : notnull
     {
         builder.HasKey(e => e.Id);
@@ -25,7 +25,7 @@ public static class MappingExtensions
     public static void MapEntityTimestamps<E, I, V>(this EntityTypeBuilder<E> builder,
         Expression<Func<V, I>> idConversion, Action<PropertyBuilder<I>>? idBuilder = null)
         where E : EntityTimestamps<I, V>
-        where I : ObjectId<V>
+        where I : struct, IObjectId<V>
         where V : notnull
     {
         builder.MapEntity(idConversion, idBuilder);
@@ -38,7 +38,7 @@ public static class MappingExtensions
     public static void MapEntitySoftDelete<E, I, V>(this EntityTypeBuilder<E> builder,
        Expression<Func<V, I>> idConversion, Action<PropertyBuilder<I>>? idBuilder = null)
        where E : EntitySoftDelete<I, V>
-       where I : ObjectId<V>
+       where I : struct, IObjectId<V>
        where V : notnull
     {
         builder.MapEntityTimestamps(idConversion, idBuilder);
@@ -48,7 +48,7 @@ public static class MappingExtensions
 
     public static void MapPersonBase<T, I, V>(this EntityTypeBuilder<T> builder, Expression<Func<V, I>> idConversion, Action<PropertyBuilder<I>>? idBuilder = null)
         where T : PersonBase<I, V>
-        where I : ObjectId<V>
+        where I : struct, IObjectId<V>
         where V : notnull
     {
         builder.MapEntity(idConversion, idBuilder);

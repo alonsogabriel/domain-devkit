@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <PackageId>DomainDevKit</PackageId>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <RepositoryUrl>https://github.com/alonsogabriel/domain-devkit</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>

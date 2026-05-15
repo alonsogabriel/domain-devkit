@@ -4,8 +4,9 @@ namespace DomainDevKit;
 
 public interface IRepository<T> where T : class
 {
-    Task<T?> Find(object id, CancellationToken ct = default);
-    Task<IEnumerable<T>> FindWhere(Expression<Func<T, bool>> predicate, CancellationToken ct = default);
-    Task Save(T entity, CancellationToken ct = default);
-    Task Delete(T entity, CancellationToken ct = default);
+    Task<T?> FindAsync(object id, CancellationToken ct = default);
+    Task<IEnumerable<T>> FindWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default);
+    Task AddAsync(T entity, CancellationToken ct = default);
+    Task UpdateAsync(T entity, CancellationToken ct = default);
+    Task DeleteAsync(T entity, CancellationToken ct = default);
 }

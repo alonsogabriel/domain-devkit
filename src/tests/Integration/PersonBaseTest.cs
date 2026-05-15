@@ -31,6 +31,8 @@ public class PersonBaseTests(ITestOutputHelper output)
 
         // Then
         var savedOrder = db.Orders.FirstOrDefault(o => o.Id.Equals(order.Id));
+        var savedCustomer = db.Customers.FirstOrDefault(c => c.Id.Equals(customer.Id));
+        savedCustomer?.ChangeName(new PersonName("Rapha", null, "Alonso", null));
 
         Assert.NotNull(savedOrder);
         Assert.NotNull(db.Customers.AsNoTracking().FirstOrDefault(c => c.Id.Equals(savedOrder.CustomerId)));
@@ -46,7 +48,7 @@ public class PersonBaseTests(ITestOutputHelper output)
         // Given
         using var db = new FakeDb();
         var product = new Product();
-    
+
         // When
         product.Descriptions.Add(new()
         {
@@ -59,7 +61,7 @@ public class PersonBaseTests(ITestOutputHelper output)
             Locale = new("en-US"),
             Value = "Washing machine"
         });
-    
+
         // Then
         db.Products.Add(product);
         db.SaveChanges();
@@ -70,7 +72,7 @@ public class PersonBaseTests(ITestOutputHelper output)
 
         Assert.NotNull(savedProduct);
 
-        foreach(var desc in savedProduct.Descriptions)
+        foreach (var desc in savedProduct.Descriptions)
         {
             output.WriteLine($"{desc.Locale.Value}: {desc.Value}");
         }
@@ -135,13 +137,18 @@ internal class Customer : PersonBase<CustomerId, Guid>
     private Customer() { }
     public Customer(PersonName name, Gender gender, BirthDate birthDate)
         : base(new CustomerId(), name, gender, birthDate) { }
+
+    public void ChangeName(PersonName name)
+    {
+        Name = name;
+    }
 }
 
 internal readonly struct OrderId(Guid value) : IObjectId<Guid>
 {
     public OrderId() : this(Guid.NewGuid()) { }
 
-    public Guid Value  { get; private init; } = value;
+    public Guid Value { get; private init; } = value;
 }
 
 internal class Order : EntitySoftDelete<OrderId, Guid>

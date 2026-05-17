@@ -40,7 +40,7 @@ public class ObjectIdTests
     }
 }
 
-public readonly struct SomeId(int value) : IObjectId<int>
+public readonly struct SomeId(int value) : IValueObject<int>
 {
     public int Value { get; private init; } = value;
 }

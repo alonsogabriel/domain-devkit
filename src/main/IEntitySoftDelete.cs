@@ -1,13 +1,11 @@
 namespace DomainDevKit;
 
-public abstract class EntitySoftDelete<TId, TValue>
-    : EntityTimestamps<TId, TValue>, ISoftDelete
-    where TId : struct, IObjectId<TValue>
-    where TValue : notnull
+public abstract class EntitySoftDelete<T>
+    : EntityTimestamps<T>, ISoftDelete where T : notnull
 {
 
     protected EntitySoftDelete() { }
-    protected EntitySoftDelete(TId id) : base(id) { }
+    protected EntitySoftDelete(T id) : base(id) { }
     public DateTime? DeletedAt { get; protected set; }
 
     public void Delete()

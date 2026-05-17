@@ -15,14 +15,12 @@ public interface IPersonBase
     BirthDate? BirthDate { get; }
 }
 
-public abstract class PersonBase<TId, TValue>
-    : EntitySoftDelete<TId, TValue>, IPersonBase
-    where TId : struct, IObjectId<TValue>
-    where TValue : notnull
+public abstract class PersonBase<T>
+    : EntitySoftDelete<T>, IPersonBase where T : notnull
 {
     protected PersonBase() { }
 
-    protected PersonBase(TId id, PersonName name, Gender? gender, BirthDate? birthDate)
+    protected PersonBase(T id, PersonName name, Gender? gender, BirthDate? birthDate)
     {
         Id = id;
         Name = name;

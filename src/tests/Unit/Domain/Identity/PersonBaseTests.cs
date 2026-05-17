@@ -22,13 +22,13 @@ public class PersonBaseTests(ITestOutputHelper output)
     }
 }
 
-internal readonly struct PersonId(Guid value) : IObjectId<Guid>
+internal readonly struct PersonId(Guid value) : IValueObject<Guid>
 {
     public static PersonId New() => new(Guid.NewGuid());
     public Guid Value  { get; private init; } = value;
 }
 
-internal class Person : PersonBase<PersonId, Guid>
+internal class Person : PersonBase<PersonId>
 {
     public Person(PersonName name, Gender gender, BirthDate birthDate)
         : base(PersonId.New(), name, gender, birthDate)

@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using DomainDevKit;
 using DomainDevKit.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -8,50 +7,43 @@ namespace DomainDevKit.EFCore;
 
 public static class MappingExtensions
 {
-    public static void MapEntity<E, I, V>(this EntityTypeBuilder<E> builder,
-        Expression<Func<V, I>> idConversion, Action<PropertyBuilder<I>>? idBuilder = null)
-        where E : Entity<I, V>
-        where I : struct, IObjectId<V>
-        where V : notnull
+    public static void MapEntity<E, I>(this EntityTypeBuilder<E> builder)
+        where E : Entity<I>
+        where I : notnull
     {
         builder.HasKey(e => e.Id);
-
-        var id = builder.Property(e => e.Id)
-            .HasConversion(id => id.Value, idConversion);
-
-        idBuilder?.Invoke(id);
     }
 
-    public static void MapEntityTimestamps<E, I, V>(this EntityTypeBuilder<E> builder,
-        Expression<Func<V, I>> idConversion, Action<PropertyBuilder<I>>? idBuilder = null)
-        where E : EntityTimestamps<I, V>
-        where I : struct, IObjectId<V>
-        where V : notnull
+    public static void MapEntityTimestamps<E, I>(this EntityTypeBuilder<E> builder)
+        where E : EntityTimestamps<I>
+        where I : notnull
     {
-        builder.MapEntity(idConversion, idBuilder);
+        builder.MapEntity<E, I>();
+
         builder.Property(e => e.CreatedAt)
             .IsRequired();
+
         builder.Property(e => e.UpdatedAt)
             .IsRequired(false);
     }
 
-    public static void MapEntitySoftDelete<E, I, V>(this EntityTypeBuilder<E> builder,
-       Expression<Func<V, I>> idConversion, Action<PropertyBuilder<I>>? idBuilder = null)
-       where E : EntitySoftDelete<I, V>
-       where I : struct, IObjectId<V>
-       where V : notnull
+    public static void MapEntitySoftDelete<E, I>(this EntityTypeBuilder<E> builder)
+       where E : EntitySoftDelete<I>
+       where I : notnull
     {
-        builder.MapEntityTimestamps(idConversion, idBuilder);
+        builder.MapEntityTimestamps<E, I>();
+
         builder.Property(x => x.DeletedAt)
             .IsRequired(false);
+
+        builder.HasQueryFilter(x => x.DeletedAt == null);
     }
 
-    public static void MapPersonBase<T, I, V>(this EntityTypeBuilder<T> builder, Expression<Func<V, I>> idConversion, Action<PropertyBuilder<I>>? idBuilder = null)
-        where T : PersonBase<I, V>
-        where I : struct, IObjectId<V>
-        where V : notnull
+    public static void MapPersonBase<E, I>(this EntityTypeBuilder<E> builder)
+        where E : PersonBase<I>
+        where I : notnull
     {
-        builder.MapEntity(idConversion, idBuilder);
+        builder.MapEntity<E, I>();
 
         builder.MapPersonName(p => p.Name);
         builder.MapGender(p => p.Gender, false);

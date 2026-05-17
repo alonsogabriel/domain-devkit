@@ -93,13 +93,18 @@ internal class FakeDb : DbContext
         modelBuilder
             .Entity<Customer>(c =>
             {
-                c.MapPersonBase<Customer, CustomerId, Guid>(v => new CustomerId(v), id => id.ValueGeneratedNever());
+                c.MapPersonBase<Customer, CustomerId>();
 
+                c.Property(x => x.Id)
+                    .HasConversion(id => id.Value, v => new CustomerId(v));
             })
             .MapEnum<OrderStatus>()
             .Entity<Order>(o =>
             {
-                o.MapEntity<Order, OrderId, Guid>(v => new OrderId(v), id => id.ValueGeneratedNever());
+                o.MapEntity<Order, OrderId>();
+
+                o.Property(x => x.Id)
+                    .HasConversion(id => id.Value, v => new OrderId(v));
 
                 o.HasOne<Customer>()
                     .WithMany()
@@ -125,14 +130,13 @@ internal class FakeDb : DbContext
     }
 }
 
-internal readonly struct CustomerId(Guid value) : IObjectId<Guid>
+internal readonly struct CustomerId(Guid value) : IValueObject<Guid>
 {
     public CustomerId() : this(Guid.NewGuid()) { }
-
     public Guid Value { get; private init; } = value;
 }
 
-internal class Customer : PersonBase<CustomerId, Guid>
+internal class Customer : PersonBase<CustomerId>
 {
     private Customer() { }
     public Customer(PersonName name, Gender gender, BirthDate birthDate)
@@ -144,14 +148,14 @@ internal class Customer : PersonBase<CustomerId, Guid>
     }
 }
 
-internal readonly struct OrderId(Guid value) : IObjectId<Guid>
+internal readonly struct OrderId(Guid value) : IValueObject<Guid>
 {
     public OrderId() : this(Guid.NewGuid()) { }
 
     public Guid Value { get; private init; } = value;
 }
 
-internal class Order : EntitySoftDelete<OrderId, Guid>
+internal class Order : EntitySoftDelete<OrderId>
 {
     private Order() { }
 
